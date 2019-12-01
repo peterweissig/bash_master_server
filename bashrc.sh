@@ -29,7 +29,7 @@ export SERVER_PATH_WORKSPACE="$(cd "${SERVER_PATH_SCRIPT}../../../" && \
 #***************************[help]********************************************
 # 2019 12 01
 
-. ${ROBO_PATH_SCRIPT}scripts/help.sh
+. ${SERVER_PATH_SCRIPT}scripts/help.sh
 
 
 #***************************[repository]**************************************
@@ -46,7 +46,7 @@ fi
 #***************************[config]******************************************
 # 2019 12 01
 
-. ${ROBO_PATH_SCRIPT}scripts/config.sh
+. ${SERVER_PATH_SCRIPT}scripts/config.sh
 
 
 #***************************[simple bash scripts]*****************************
