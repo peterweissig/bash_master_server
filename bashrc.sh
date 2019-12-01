@@ -9,7 +9,13 @@ if [ "$SOURCED_BASH_MASTER_SERVER" != "" ]; then
     exit
 fi
 
-export SOURCED_BASH_MASTER_SERVER=1
+if [ "$SOURCED_BASH_LAST" == "" ]; then
+    export SOURCED_BASH_LAST=1
+else
+    export SOURCED_BASH_LAST="$(expr "$SOURCED_BASH_LAST" + 1)"
+fi
+
+export SOURCED_BASH_MASTER_SERVER="$SOURCED_BASH_LAST"
 
 
 #***************************[paths and files]*********************************
