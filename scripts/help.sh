@@ -2,7 +2,7 @@
 
 
 #***************************[all]*********************************************
-# 2019 12 01
+# 2020 01 05
 
 function server_help_all() {
 
@@ -58,11 +58,12 @@ function server_help_all() {
     echo "install functions"
     echo -n "  "; echo "server_update               #no help"
     echo -n "  "; server_config_aptcacher -h
+    echo -n "  "; server_config_git_init  -h
     echo ""
 }
 
 #***************************[help]********************************************
-# 2019 12 01
+# 2020 01 05
 
 function server_help() {
 
@@ -80,5 +81,6 @@ function server_help() {
     echo "install functions"
     echo -n "  "; echo "server_update               #no help"
     echo -n "  "; server_config_aptcacher -h
+    echo -n "  "; server_config_git_init  -h
     echo ""
 }
