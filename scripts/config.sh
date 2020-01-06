@@ -97,7 +97,7 @@ alias server_config_git_create_repo="echo '...todo...'"
 function server_config_git_init() {
 
     temp="sets up basic configurations to add git repos."
-    official_storage_path="/srv/git/"
+    official_storage_path="/srv/git"
 
     # print help
     if [ "$1" == "-h" ]; then
@@ -146,6 +146,8 @@ function server_config_git_init() {
         temp="$(cat "$FILENAME_CONFIG_SHELL" | grep -e "^${git_shell}\$")"
         if [ "$temp" == "" ]; then
             AWK_STRING_SHELL="
+                { print \$0 }
+
                 # add git-shell to login-shell
                 END {
                     print \"$git_shell\"
@@ -170,7 +172,8 @@ function server_config_git_init() {
             echo "    Ist diese Information richtig? [J/N] (push enter)"
             echo ""
 
-            sudo adduser --disabled-password --shell "$git_shell" git
+            sudo adduser --disabled-password --shell "$git_shell" git && \
+              sudo chmod go= "/home/git/"
                 #sudo passwd -l git
                 #sudo chsh git
             if [ $? -ne 0 ]; then return -4; fi
@@ -180,6 +183,7 @@ function server_config_git_init() {
         # check if database folder exists
         if [ ! -d "$param_storage_path" ]; then
             # create database folder
+            echo "creating storage path"
             sudo mkdir -p "$param_storage_path"
             if [ $? -ne 0 ]; then return -5; fi
         fi
@@ -193,7 +197,9 @@ function server_config_git_init() {
         # check storage path
         if [ ! -e "$official_storage_path" ]; then
             # create softlink
-            sudo ln -s "$param_storage_path" "$official_storage_path"
+            echo "adding symbolic link"
+            echo "    ($official_storage_path -> $param_storage_path)"
+            sudo ln -s -T "$param_storage_path" "$official_storage_path"
             if [ $? -ne 0 ]; then return -7; fi
         fi
 
@@ -216,9 +222,10 @@ function server_config_git_init_restore() {
 
     # check if git-user exists
     git_user="$(cat /etc/passwd | grep -e "^git")"
-    if [ "$git_user" == "" ]; then
+    if [ "$git_user" != "" ]; then
         # remove git-user
-        sudo deluser git
+        echo "remove user git"
+        sudo deluser git --remove-home
         if [ $? -ne 0 ]; then return -2; fi
     fi
 
@@ -232,10 +239,10 @@ function server_config_git_init_restore() {
     fi
 
     # remove link
-    official_storage_path="/srv/git/"
+    official_storage_path="/srv/git"
 
     if [ -L "$official_storage_path" ]; then
-        echo "removing symbolic link to $official_storage_path"
+        echo "removing symbolic link $official_storage_path"
         sudo rm "$official_storage_path"
     fi
 
