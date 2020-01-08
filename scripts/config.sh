@@ -371,3 +371,52 @@ function server_config_git_add_user() {
 
     echo "done :-)"
 }
+
+# 2020 01 08
+function server_config_git_list_user() {
+
+    temp="lists all users for the git repos."
+    git_home="/home/git/"
+    FILENAME_CONFIG="${git_home}.ssh/authorized_keys"
+
+    # print help
+    if [ "$1" == "-h" ]; then
+        echo "$FUNCNAME"
+
+        return
+    fi
+    if [ "$1" == "--help" ]; then
+        echo "$FUNCNAME needs 0 parameters"
+        echo "This function $temp"
+
+        return
+    fi
+
+    # check parameter
+    if [ $# -gt 1 ]; then
+        echo "$FUNCNAME: Parameter Error."
+        $FUNCNAME --help
+        return -1
+    fi
+
+    # check if git-user exists
+    git_user="$(cat /etc/passwd | grep -e "^git")"
+    if [ "$git_user" == "" ] || [ ! -d "$git_home" ]; then
+        echo "$FUNCNAME: git-user or its home does not exist."
+        echo "  Did you call server_config_git_init ?"
+        return -2
+    fi
+
+    # load key file
+    current_keys="$(sudo cat "$FILENAME_CONFIG")"
+    if [ $? -ne 0 ]; then return -2; fi
+
+    # list users
+    echo "users in file \"$FILENAME_CONFIG\":"
+    echo "$current_keys" | grep -E "^[^#]*ssh-rsa " | \
+      grep -o -E "[^ ]+\$"
+    if [ $? -ne 0 ]; then return -3; fi
+
+    echo ""
+    echo "done :-)"
+}
