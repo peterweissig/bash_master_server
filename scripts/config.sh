@@ -541,8 +541,10 @@ function server_config_git_list_repos() {
     echo "$git_real_path:"
 
     # list all repos
-    sudo ls --classify "${git_real_path}" | \
-      grep -e "/\$" | grep -o -E "[^ /]+"
+    #sudo ls --classify "${git_real_path}" | \
+    #  grep -e "/\$" | grep -o -E "[^ /]+"
+    sudo du --human-readable --max-depth=1 "${git_real_path}" | \
+      grep -E "[^/]+\.git"
     if [ $? -ne 0 ]; then return -4; fi
 
     echo ""
