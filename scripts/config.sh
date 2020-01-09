@@ -89,9 +89,8 @@ function server_config_aptcacher_restore() {
 }
 
 #***************************[git_repo]****************************************
-# 2020 01 05
 
-alias server_config_git_create_repo="echo '...todo...'"
+export SERVER_CONFIG_GIT_STORAGE_PATH="/srv/git"
 
 # 2020 01 05
 function server_config_git_init() {
@@ -108,7 +107,7 @@ function server_config_git_init() {
     if [ "$1" == "--help" ]; then
         echo "$FUNCNAME needs 0-1 parameters"
         echo "    [#1:]optional path for storing git repos"
-        echo "         (default $official_storage_path)"
+        echo "         (default $SERVER_CONFIG_GIT_STORAGE_PATH)"
         echo "This function $temp"
 
         return
@@ -128,7 +127,7 @@ function server_config_git_init() {
     # init variables
     param_storage_path="$1"
     if [ $# -lt 1 ]; then
-        param_storage_path="$official_storage_path"
+        param_storage_path="$SERVER_CONFIG_GIT_STORAGE_PATH"
     fi
 
     # config git-shell
@@ -195,11 +194,12 @@ function server_config_git_init() {
 
         # add link from official storage path
         # check storage path
-        if [ ! -e "$official_storage_path" ]; then
+        temp="$SERVER_CONFIG_GIT_STORAGE_PATH"
+        if [ ! -e "$temp" ]; then
             # create softlink
             echo "adding symbolic link"
-            echo "    ($official_storage_path -> $param_storage_path)"
-            sudo ln -s -T "$param_storage_path" "$official_storage_path"
+            echo "    ($temp -> $param_storage_path)"
+            sudo ln -s -T "$param_storage_path" "$temp"
             if [ $? -ne 0 ]; then return -7; fi
         fi
 
@@ -321,7 +321,7 @@ function server_config_git_add_user() {
     fi
 
     if [ "${key:0:8}" != "ssh-rsa " ]; then
-        echo "$FUNCNAME: key does not start with \"rsa-ssh\"."
+        echo "$FUNCNAME: key does not start with \"ssh-rsa\"."
         return -6
     fi
 
@@ -373,7 +373,7 @@ function server_config_git_add_user() {
 }
 
 # 2020 01 08
-function server_config_git_list_user() {
+function server_config_git_list_users() {
 
     temp="lists all users for the git repos."
     git_home="/home/git/"
@@ -416,6 +416,134 @@ function server_config_git_list_user() {
     echo "$current_keys" | grep -E "^[^#]*ssh-rsa " | \
       grep -o -E "[^ ]+\$"
     if [ $? -ne 0 ]; then return -3; fi
+
+    echo ""
+    echo "done :-)"
+}
+
+# 2020 01 08
+function server_config_git_create_repo() {
+
+    temp="adds the given repo to the local server."
+    git_path="${SERVER_CONFIG_GIT_STORAGE_PATH}"
+
+    # print help
+    if [ "$1" == "-h" ]; then
+        echo "$FUNCNAME [repo-name]"
+
+        return
+    fi
+    if [ "$1" == "--help" ]; then
+        echo "$FUNCNAME needs 0-1 parameters"
+        echo "     #1: name of repo to be created"
+        echo "         e.g. docs"
+        echo "This function $temp"
+
+        return
+    fi
+
+    # check parameter
+    if [ $# -ne 1 ]; then
+        echo "$FUNCNAME: Parameter Error."
+        $FUNCNAME --help
+        return -1
+    fi
+
+    # init variables
+    param_repo_name="$1"
+    repo_full_name="${param_repo_name}.git"
+
+    # check for user agreement
+    _config_simple_parameter_check "$FUNCNAME" "" "$temp"
+    if [ $? -ne 0 ]; then return -1; fi
+
+    # repo-name
+    temp="$(_file_name_clean_string "$param_repo_name")"
+    if [ "$param_repo_name" != "$temp" ]; then
+        echo "$FUNCNAME: repo name is not valid - try \"$temp\"."
+        return -2
+    fi
+
+    # check if git-user exists
+    git_user="$(cat /etc/passwd | grep -e "^git")"
+    if [ "$git_user" == "" ] || [ ! -d "$git_path" ]; then
+        echo "$FUNCNAME: git-user or the repo storage path does not exist."
+        echo "  Did you call server_config_git_init ?"
+        return -3
+    fi
+
+    # get real path
+    git_real_path="$(sudo realpath "$git_path")/"
+    if [ $? -ne 0 ]; then return -4; fi
+
+    # read all dirs
+    readarray -t filelist <<< "$(sudo ls --classify "${git_real_path}" | \
+      grep -e "/\$" | grep -o -E "[^ /]+")"
+    if [ $? -ne 0 ]; then return -5; fi
+
+    # iterate over all files
+    for i in ${!filelist[@]}; do
+        if [ "${filelist[$i]}" == "$repo_full_name" ]; then
+            echo -n "$FUNCNAME: repo $param_repo_name already exists"
+            echo " in \"$git_real_path\"."
+            return -6
+        fi
+    done
+
+    # create repo
+    repo_full_path="${git_real_path}${repo_full_name}/"
+    sudo mkdir "${repo_full_path}" &&
+      sudo git init --bare "${repo_full_path}" &&
+      sudo chown -R git "${repo_full_path}"
+    if [ $? -ne 0 ]; then return -6; fi
+
+    echo "done :-)"
+}
+
+# 2020 01 09
+function server_config_git_list_repos() {
+
+    temp="lists all repo of the local server."
+    git_path="${SERVER_CONFIG_GIT_STORAGE_PATH}"
+
+    # print help
+    if [ "$1" == "-h" ]; then
+        echo "$FUNCNAME"
+
+        return
+    fi
+    if [ "$1" == "--help" ]; then
+        echo "$FUNCNAME needs 0 parameters"
+        echo "This function $temp"
+
+        return
+    fi
+
+    # check parameter
+    if [ $# -gt 0 ]; then
+        echo "$FUNCNAME: Parameter Error."
+        $FUNCNAME --help
+        return -1
+    fi
+
+    # check if git-user exists
+    git_user="$(cat /etc/passwd | grep -e "^git")"
+    if [ "$git_user" == "" ] || [ ! -d "$git_path" ]; then
+        echo "$FUNCNAME: git-user or the repo storage path does not exist."
+        echo "  Did you call server_config_git_init ?"
+        return -3
+    fi
+
+    # get real path
+    git_real_path="$(sudo realpath "$git_path")/"
+    if [ $? -ne 0 ]; then return -3; fi
+
+    echo "$git_real_path:"
+
+    # list all repos
+    sudo ls --classify "${git_real_path}" | \
+      grep -e "/\$" | grep -o -E "[^ /]+"
+    if [ $? -ne 0 ]; then return -4; fi
 
     echo ""
     echo "done :-)"
