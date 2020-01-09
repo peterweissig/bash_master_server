@@ -49,6 +49,12 @@ fi
 . ${SERVER_PATH_SCRIPT}scripts/config.sh
 
 
+#***************************[git repo]****************************************
+# 2020 01 09
+
+. ${SERVER_PATH_SCRIPT}scripts/git.sh
+
+
 #***************************[simple bash scripts]*****************************
 # 2019 12 01
 
