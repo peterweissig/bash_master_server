@@ -92,7 +92,7 @@ function server_config_aptcacher_restore() {
 
 export SERVER_CONFIG_GIT_STORAGE_PATH="/srv/git"
 
-# 2020 01 05
+# 2020 01 26
 function server_config_git_init() {
 
     temp="sets up basic configurations to add git repos."
@@ -204,6 +204,8 @@ function server_config_git_init() {
         fi
 
     echo ""
+    echo "You may hide the git-user from login:"
+    echo "    $ config_users_hide_login git"
     echo "You may add ssh-users (having access to all repos):"
     echo "    $ server_config_git_add_user"
     echo "You may create repositories (for all users):"
