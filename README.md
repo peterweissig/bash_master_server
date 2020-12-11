@@ -2,6 +2,10 @@
 Master scripts for collection of server scripts.
 
 ## Setup for linux (Ubuntu)
+install git client
+
+    sudo apt install git
+
 create workspace directory
 
     mkdir -p ~/workspace
