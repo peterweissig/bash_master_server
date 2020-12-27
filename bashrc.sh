@@ -19,11 +19,10 @@ export SOURCED_BASH_MASTER_SERVER="$SOURCED_BASH_LAST"
 
 
 #***************************[paths and files]*********************************
-# 2019 12 01
+# 2020 12 27
 
-export SERVER_PATH_SCRIPT="$(cd "$(dirname "${BASH_SOURCE}")" && pwd )/"
-export SERVER_PATH_WORKSPACE="$(cd "${SERVER_PATH_SCRIPT}../../../" && \
-  pwd )/"
+export SERVER_PATH_SCRIPT="$(realpath "$(dirname "${BASH_SOURCE}")" )/"
+export SERVER_PATH_WORKSPACE="$(realpath "${SERVER_PATH_SCRIPT}../../.." )/"
 
 
 #***************************[help]********************************************
