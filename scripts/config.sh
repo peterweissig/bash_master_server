@@ -68,6 +68,38 @@ function server_config_aptcacher() {
     echo "done :-)"
 }
 
+# 2021 01 03
+function server_config_aptcacher_check() {
+
+    # Check the configuration
+    FILENAME_CONFIG="/etc/apt-cacher-ng/acng.conf"
+
+    # init variables
+    error_flag=0;
+
+    # initial output
+    echo -n "apt-cacher ... "
+
+    # check status of service
+    config_check_service apt-cacher-ng "quiet" "enabled"
+    if [ $? -ne 0 ]; then error_flag=1; fi
+
+    # check config file
+    if [ ! -e "${FILENAME_CONFIG}" ]; then
+        error_flag=1
+        echo ""
+        echo -n "  missing config file ${FILENAME_CONFIG}"
+    fi
+
+    # final result
+    if [ $error_flag -eq 0 ]; then
+        echo "ok"
+    else
+        echo ""
+    fi
+}
+
+# 2019 12 01
 function server_config_aptcacher_restore() {
 
     # print help and check for user agreement

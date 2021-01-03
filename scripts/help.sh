@@ -2,7 +2,7 @@
 
 
 #***************************[all]*********************************************
-# 2020 01 09
+# 2021 01 03
 
 function server_help_all() {
 
@@ -58,7 +58,7 @@ function server_help_all() {
     echo "install functions"
     echo -n "  "; echo "server_update               #no help"
     echo -n "  "; server_config_aptcacher -h
-    echo -n "  "; server_config_git_init  -h
+    echo -n "  "; server_config_git_init -h
     echo ""
     echo "git functions"
     echo -n "  "; server_config_git_add_user -h
@@ -66,10 +66,13 @@ function server_help_all() {
     echo -n "  "; server_config_git_create_repos -h
     echo -n "  "; server_config_git_list_repos -h
     echo ""
+    echo "check functions"
+    echo -n "  "; echo "server_config_aptcacher_check  #no help"
+    echo ""
 }
 
 #***************************[help]********************************************
-# 2020 01 09
+# 2021 01 03
 
 function server_help() {
 
@@ -86,13 +89,16 @@ function server_help() {
     echo ""
     echo "install functions"
     echo -n "  "; echo "server_update               #no help"
-    echo -n "  "; server_config_aptcacher    -h
-    echo -n "  "; server_config_git_init  -h
+    echo -n "  "; server_config_aptcacher -h
+    echo -n "  "; server_config_git_init -h
     echo ""
     echo "git functions"
     echo -n "  "; server_config_git_add_user -h
     echo -n "  "; server_config_git_list_users -h
     echo -n "  "; server_config_git_create_repos -h
     echo -n "  "; server_config_git_list_repos -h
+    echo ""
+    echo "check functions"
+    echo -n "  "; echo "server_config_aptcacher_check  #no help"
     echo ""
 }
