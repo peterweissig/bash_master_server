@@ -14,7 +14,7 @@ export REPO_ROOT_GITHUB_URL="https://github.com/peterweissig/"
 
 
 #***************************[bash]********************************************
-# 2019 12 01
+# 2021 01 03
 
 # paths
 # note: this is already set in file bash/repo/list.sh
@@ -33,7 +33,7 @@ alias git_status_bash_repo="_repo_git_st \"${REPO_BASH_REPO[0]}\""
 
 # main scripts
 # note: this is already set in file bash/repo/list.sh
-export REPO_BASH_MASTER_SERVER=("${REPO_BASH_MASTER_PATH}bash_only/" \
+export REPO_BASH_MASTER_SERVER=("${REPO_BASH_MASTER_PATH}server/" \
   "${REPO_ROOT_GITHUB_URL}bash_master_server.git")
 
 alias git_clone_bash_master_server="_repo_git_clone \
