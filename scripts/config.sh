@@ -124,7 +124,7 @@ function server_config_aptcacher_restore() {
 
 export SERVER_CONFIG_GIT_STORAGE_PATH="/srv/git"
 
-# 2020 01 26
+# 2021 01 03
 function server_config_git_init() {
 
     temp="sets up basic configurations to add git repos."
@@ -193,17 +193,8 @@ function server_config_git_init() {
         git_user="$(cat /etc/passwd | grep -e "^git")"
         if [ "$git_user" == "" ]; then
             # add git user
-            echo "Creating git-user soon - please insert the following:"
-            echo "    Vollständiger Name  : git-user"
-            echo "    Zimmernummer        : \"\" (leave empty)"
-            echo "    Telefon geschäftlich: \"\" (leave empty)"
-            echo "    Telefon privat      : \"\" (leave empty)"
-            echo "    Sonstiges           : \"\" (leave empty)"
-            echo ""
-            echo "    Ist diese Information richtig? [J/N] (push enter)"
-            echo ""
-
-            sudo adduser --disabled-password --shell "$git_shell" git && \
+            sudo adduser --disabled-password --shell "$git_shell" \
+              --gecos "git-user" git && \
               sudo chmod go= "/home/git/"
                 #sudo passwd -l git
                 #sudo chsh git
@@ -247,6 +238,7 @@ function server_config_git_init() {
     echo "done :-)"
 }
 
+# 2020 01 26
 function server_config_git_init_restore() {
 
     # print help and check for user agreement
