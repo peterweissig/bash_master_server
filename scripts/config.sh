@@ -68,7 +68,7 @@ function server_config_aptcacher() {
     echo "done :-)"
 }
 
-# 2021 01 03
+# 2021 01 15
 function server_config_aptcacher_check() {
 
     # Check the configuration
@@ -78,7 +78,7 @@ function server_config_aptcacher_check() {
     error_flag=0;
 
     # initial output
-    echo -n "apt-cacher ... "
+    echo -n "apt-cacher server ... "
 
     # check status of service
     config_check_service apt-cacher-ng "quiet" "enabled"
