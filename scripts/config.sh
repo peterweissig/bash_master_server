@@ -8,7 +8,7 @@ alias server_update="config_update_system"
 
 
 #***************************[apt-cacher-ng]***********************************
-# 2019 12 01
+# 2023 01 28
 
 function server_config_aptcacher() {
 
@@ -49,11 +49,12 @@ function server_config_aptcacher() {
           print \"# [EDIT]: \",\$0
           \$0 = \"BindAddress: localhost $1\";
         }
-        # 2019 11 20: removed offline mode - it is not useful anymore
-        #\$0 ~ /^# Offlinemode/ {
-        #  print \"# [EDIT]: \",\$0
-        #  \$0 = \"Offlinemode:1\";
-        #}
+        # 2023 01 28: bugfix of https:// repositories
+        # see also https://bugs.launchpad.net/ubuntu/+source/apt-cacher-ng/+bug/1993026
+        \$0 ~ /^# AllowUserPorts: 80/ {
+          print \"# [EDIT]: \",\$0
+          \$0 = \"AllowUserPorts: 80 443\";
+        }
 
         { print \$0 }
     "
@@ -68,7 +69,7 @@ function server_config_aptcacher() {
     echo "done :-)"
 }
 
-# 2021 01 15
+# 2023 01 28
 function server_config_aptcacher_check() {
 
     # Check the configuration
@@ -89,6 +90,14 @@ function server_config_aptcacher_check() {
         error_flag=1
         echo ""
         echo -n "  missing config file ${FILENAME_CONFIG}"
+    fi
+
+    # check if port 443 is enabled (bugfix)
+	temp="$(cat "${FILENAME_CONFIG}" | grep "AllowUserPorts: 80 443")"
+    if [ "$temp" == "" ]; then
+        error_flag=1
+        echo ""
+        echo -n "  missing user port 443"
     fi
 
     # final result
