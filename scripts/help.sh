@@ -2,7 +2,7 @@
 
 
 #***************************[all]*********************************************
-# 2021 01 03
+# 2023 09 23
 
 function server_help_all() {
 
@@ -57,7 +57,6 @@ function server_help_all() {
     echo ""
     echo "install functions"
     echo -n "  "; echo "server_update               #no help"
-    echo -n "  "; server_config_aptcacher -h
     echo -n "  "; server_config_git_init -h
     echo ""
     echo "git functions"
@@ -72,7 +71,7 @@ function server_help_all() {
 }
 
 #***************************[help]********************************************
-# 2021 01 03
+# 2023 09 23
 
 function server_help() {
 
@@ -89,7 +88,6 @@ function server_help() {
     echo ""
     echo "install functions"
     echo -n "  "; echo "server_update               #no help"
-    echo -n "  "; server_config_aptcacher -h
     echo -n "  "; server_config_git_init -h
     echo ""
     echo "git functions"

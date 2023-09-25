@@ -8,126 +8,22 @@ alias server_update="config_update_system"
 
 
 #***************************[apt-cacher-ng]***********************************
-# 2023 01 28
+# 2023 09 23
 
-function server_config_aptcacher() {
-
-    temp="sets the basic configuration of the apt-cacher-ng daemon."
-
-    # print help
-    if [ "$1" == "-h" ]; then
-        echo "$FUNCNAME <ip-address(es)>"
-
-        return
-    fi
-    if [ "$1" == "--help" ]; then
-        echo "$FUNCNAME needs 1 parameter"
-        echo "     #1: ip-address(es) of apt-cacher-ng server"
-        echo "         if only localhost is needed, set to \"\""
-        echo "This function $temp"
-
-        return
-    fi
-
-    # check parameter
-    if [ $# -ne 1 ]; then
-        echo "$FUNCNAME: Parameter Error."
-        $FUNCNAME --help
-        return -1
-    fi
-
-    # check for user agreement
-    _config_simple_parameter_check "$FUNCNAME" "" "$temp"
-    if [ $? -ne 0 ]; then return -1; fi
-
-    # Do the configuration
-    FILENAME_CONFIG="/etc/apt-cacher-ng/acng.conf"
-
-    AWK_STRING="
-        # config apt-cacher
-        \$0 ~ /BindAddress: / {
-          print \"# [EDIT]: \",\$0
-          \$0 = \"BindAddress: localhost $1\";
-        }
-        # 2023 01 28: bugfix of https:// repositories
-        # see also https://bugs.launchpad.net/ubuntu/+source/apt-cacher-ng/+bug/1993026
-        \$0 ~ /^# AllowUserPorts: 80/ {
-          print \"# [EDIT]: \",\$0
-          \$0 = \"AllowUserPorts: 80 443\";
-        }
-
-        { print \$0 }
-    "
-
-    _config_file_modify "$FILENAME_CONFIG" "$AWK_STRING" "backup-once"
-    if [ $? -ne 0 ]; then return -3; fi
-
-    echo "restarting apt-cacher daemon"
-    sudo systemctl restart apt-cacher-ng
-    if [ $? -ne 0 ]; then return -4; fi
-
-    echo "done :-)"
-}
-
-# 2023 01 28
 function server_config_aptcacher_check() {
 
-    # Check the configuration
-    FILENAME_CONFIG="/etc/apt-cacher-ng/acng.conf"
+    # no output per default
 
-    # init variables
-    error_flag=0;
-
-    # initial output
-    echo -n "apt-cacher server ... "
-
-    # check status of service
-    config_check_service apt-cacher-ng "quiet" "enabled"
-    if [ $? -ne 0 ]; then error_flag=1; fi
-
-    # check config file
-    if [ ! -e "${FILENAME_CONFIG}" ]; then
-        error_flag=1
-        echo ""
-        echo -n "  missing config file ${FILENAME_CONFIG}"
-    fi
-
-    # check if port 443 is enabled (bugfix)
-	temp="$(cat "${FILENAME_CONFIG}" | grep "AllowUserPorts: 80 443")"
-    if [ "$temp" == "" ]; then
-        error_flag=1
-        echo ""
-        echo -n "  missing user port 443"
-    fi
-
-    # final result
-    if [ $error_flag -eq 0 ]; then
-        echo "ok"
-    else
-        echo ""
+    # check if apt-cacher-ng is installed
+    if config_install_show | grep apt-cacher-ng || \
+      config_check_service apt-cacher-ng "quiet" "" "" > /dev/null; then
+        echo "apt-cacher-ng     ... is still installed"
+        echo "                    --> sudo apt purge apt-cacher-ng"
+        echo "                    --> sudo rm -rf /var/cache/apt-cacher-ng/"
     fi
 }
 
-# 2019 12 01
-function server_config_aptcacher_restore() {
 
-    # print help and check for user agreement
-    _config_simple_parameter_check "$FUNCNAME" "$1" \
-      "restores the old behaviour of the apt-cacher-ng daemon."
-    if [ $? -ne 0 ]; then return -1; fi
-
-    # Undo the configuration
-    FILENAME_CONFIG="/etc/apt-cacher-ng/acng.conf"
-
-    _config_file_restore "$FILENAME_CONFIG" "backup-once"
-    if [ $? -ne 0 ]; then return -2; fi
-
-    echo "restarting apt-cacher-daemon"
-    sudo systemctl restart apt-cacher-ng
-    if [ $? -ne 0 ]; then return -3; fi
-
-    echo "done :-)"
-}
 
 #***************************[git_repo]****************************************
 
