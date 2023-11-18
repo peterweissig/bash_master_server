@@ -2,9 +2,12 @@
 
 
 #***************************[update]******************************************
-# 2019 12 01
+# 2023 11 18
 
-alias server_update="config_update_system"
+function server_update() {
+    config_update_system
+}
+
 
 
 #***************************[apt-cacher-ng]***********************************
