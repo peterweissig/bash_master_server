@@ -2,7 +2,7 @@
 
 
 #***************************[all]*********************************************
-# 2023 09 23
+# 2025 10 11
 
 function server_help_all() {
 
@@ -62,7 +62,7 @@ function server_help_all() {
     echo "git functions"
     echo -n "  "; server_config_git_add_user -h
     echo -n "  "; server_config_git_list_users -h
-    echo -n "  "; server_config_git_create_repos -h
+    echo -n "  "; server_config_git_create_repo -h
     echo -n "  "; server_config_git_list_repos -h
     echo ""
     echo "check functions"
@@ -71,7 +71,7 @@ function server_help_all() {
 }
 
 #***************************[help]********************************************
-# 2023 09 23
+# 2025 10 11
 
 function server_help() {
 
@@ -93,7 +93,7 @@ function server_help() {
     echo "git functions"
     echo -n "  "; server_config_git_add_user -h
     echo -n "  "; server_config_git_list_users -h
-    echo -n "  "; server_config_git_create_repos -h
+    echo -n "  "; server_config_git_create_repo -h
     echo -n "  "; server_config_git_list_repos -h
     echo ""
     echo "check functions"
