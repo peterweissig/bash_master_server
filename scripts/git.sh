@@ -76,8 +76,8 @@ function server_config_git_add_user() {
         return -6
     fi
 
-    if [ "${key:0:8}" != "ssh-rsa " ]; then
-        echo "$FUNCNAME: key does not start with \"ssh-rsa\"."
+    if [ "${key:0:8}" != "ssh-rsa " ] && [ "${key:0:12}" != "ssh-ed25519 " ]; then
+        echo "$FUNCNAME: key does neither start with \"ssh-rsa\" nor with \"ssh-ed25519\"."
         return -6
     fi
 
